@@ -15,11 +15,11 @@ def genTextElement(id, text, parent):
     tk.parent = parent
     return tk
 
-def genStrongElement(id, text, parent):
+def genStrongElement(id, parent, text=""):
     tk = Token()
     tk.id = id
     tk.elmType = STRONG
-    tk.content = '',
+    tk.content = text
     tk.parent = parent
     return tk
 

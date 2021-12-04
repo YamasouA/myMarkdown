@@ -7,6 +7,7 @@ rootToken = Token()
 rootToken.id = 0
 rootToken.elmType = 'root'
 rootToken.content = ''
+rootToken.parent = None
 
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
@@ -34,8 +35,6 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                 processingText = ''
                 elements.append(onlyText)
             else:
-                print("INDEx")
-                print(index)
                 if (index > 0):
                     # aaa**bb**cc -> TEXT_TOKEN + **bb**cc　にする
                     text = processingText[:index]
@@ -46,7 +45,8 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
 
                 print("case match")
                 id += 1
-                elm = genStrongElement(id, '', parent)
+                elm = genStrongElement(id, parent)
+                print(elm.content)
                 parent = elm
                 elements.append(elm)
 
