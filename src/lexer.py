@@ -5,7 +5,8 @@ TEXT = 'text'
 STRONG = 'strong'
 
 # .*?でなるべく少ない文字をマッチさせる
-STRONG_ELM_REGXP = '\*\*(.*?)\*\*'
+STRONG_ELM_REGXP = r'\*\*(.*?)\*\*'
+LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 
 def genTextElement(id, text, parent):
     tk = Token()
@@ -27,6 +28,10 @@ def matchWithStrongRegxp(text):
     result = re.search(STRONG_ELM_REGXP, text)
     index = text.find("**")
     return result, index
+
+def matchWithListRegxp(text):
+    result = re.search(LIST_REGXP, text)
+    return result
 
 if __name__ == "__main__":
     print(matchWithStrongRegxp("**bo**bold**ld**|**bold**"))

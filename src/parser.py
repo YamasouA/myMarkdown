@@ -1,13 +1,10 @@
 from re import I
 from models.myToken import Token
 
-from lexer import genStrongElement, genTextElement, matchWithStrongRegxp
+from lexer import genStrongElement, genTextElement, matchWithListRegxp, matchWithStrongRegxp
 
 rootToken = Token()
-rootToken.id = 0
-rootToken.elmType = 'root'
-rootToken.content = ''
-rootToken.parent = None
+rootToken.create_token(None, 0, 'root', '')
 
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
@@ -21,15 +18,12 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
         parent = p
         # 行が空になるまで繰り返す
         while (len(processingText) != 0):
-            print("in while")
-            print(processingText)
             matchArray, index = matchWithStrongRegxp(processingText)
             # matchArray[0] -> **bold**
             # matchArray[1] -> bold
             
             # ****にマッチしないとき、テキストトークンを作成する
             if matchArray is  None:
-                print("case not match")
                 id += 1
                 onlyText = genTextElement(id, processingText, parent)
                 processingText = ''
@@ -42,11 +36,8 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                     textElm = genTextElement(id, text, parent)
                     elements.append(textElm)
                     processingText = processingText.replace(text, '')
-
-                print("case match")
                 id += 1
                 elm = genStrongElement(id, parent)
-                print(elm.content)
                 parent = elm
                 elements.append(elm)
 
@@ -54,12 +45,32 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
 
                 tokenize(matchArray[1], parent)
                 parent = p
-
-                
-        
-
     tokenize(textElement, parent)
     return elements
 
+def tokenizeList(listString):
+    UL = 'ul'
+    LIST = 'li'
+
+    id = 1
+    rootUlToken = Token()
+    rootUlToken.create_token(rootToken, id, UL, '')
+    parents = [rootUlToken]
+    parent = rootUlToken
+    tokens = [rootUlToken]
+    match = matchWithListRegxp(listString)
+    
+    id += 1
+    listToken = Token()
+    listToken.create_token(parent, id, LIST, '')
+    parents.append(listToken)
+    tokens.append(listToken)
+    listText = tokenizeText(match[3], id, listToken)
+    id += len(listText)
+    tokens.extend(listText)
+    return tokens
+
 def parse(markdownRow):
+    if matchWithListRegxp(markdownRow):
+        return tokenizeList(markdownRow)
     return tokenizeText(markdownRow)

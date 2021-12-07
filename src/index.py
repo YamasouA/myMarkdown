@@ -5,22 +5,21 @@ from generator import generate
 def convertToHTMLString(markdown):
     print("===============parse==================")
     mdArray = re.split(r'\r\n|\r|\n', markdown)
+    print(mdArray)
     asts = list(map(parse, mdArray))
-    # s = ''
-    # for i in asts:
-    #     for ast in i:
-    #         print(ast.id)
-    #         print(ast.content)
-    #         print(ast.elmType)
-    #         print(ast.parent)
-    #         s += ast.content
-    #     print(s)
+    for i in asts:
+        for ast in i:
+            print(ast)
+            print(ast.id)
+            print(ast.content)
+            print(ast.elmType)
+            print(ast.parent)
     print("===============generate==================")
     htmlString = generate(asts)
     return htmlString
 
 if __name__ == "__main__":
-    s = 'aaas**bo**bold**ld**'
+    s = 'aaas**bo**bold**ld**\n- **hello**'
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)

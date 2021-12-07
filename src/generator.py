@@ -29,7 +29,11 @@ def createMergedContent(currentToken, parentToken):
         content = '<strong>' + currentToken.content + '</strong>'
     elif parentToken.elmType == 'merged':
         position = getInsertPosition(parentToken.content)
-        content = parentToken.content[0:position] + currentToken.content + parentToken.content[:position]
+        content = parentToken.content[0:position] + currentToken.content + parentToken.content[position:]
+    elif parentToken.elmType == 'li':
+        content = '<li>' + currentToken.content + '</li>'
+    elif parentToken.elmType == 'ul':
+        content = '<ul>' + currentToken.content + '</ul>'
     return content
 
 def generateHtmlString(tokens):
@@ -38,7 +42,6 @@ def generateHtmlString(tokens):
         if token.content == "":
             continue
         s.append(token.content)
-    print(s)
     return ''.join(s[::-1])
 
 def findindex(rearrangeAst, currentToken):
@@ -51,7 +54,6 @@ def findindex(rearrangeAst, currentToken):
 
 def mergeAsts(rearrangeAst):
     rearrangeAst = rearrangeAst[::-1]
-    print("---------------mergeAsts------------------")
     while not isAllElmParentRoot(rearrangeAst):
         index = 0
         while index < len(rearrangeAst):
@@ -63,7 +65,6 @@ def mergeAsts(rearrangeAst):
                     currentToken = rearrangeAst[index]
                     rearrangeAst.pop(index)
                     parentIndex = findindex(rearrangeAst, currentToken)
-                    print(parentIndex)
                     parentToken = rearrangeAst[parentIndex]
                     mergedToken = Token()
                     mergedToken.create_token(parentToken.parent, parentToken.id, 'merged', createMergedContent(currentToken, parentToken))
