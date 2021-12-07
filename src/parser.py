@@ -1,4 +1,4 @@
-from re import I
+import re
 from models.myToken import Token
 
 from lexer import genStrongElement, genTextElement, matchWithListRegxp, matchWithStrongRegxp
@@ -58,19 +58,27 @@ def tokenizeList(listString):
     parents = [rootUlToken]
     parent = rootUlToken
     tokens = [rootUlToken]
-    match = matchWithListRegxp(listString)
-    
-    id += 1
-    listToken = Token()
-    listToken.create_token(parent, id, LIST, '')
-    parents.append(listToken)
-    tokens.append(listToken)
-    listText = tokenizeText(match[3], id, listToken)
-    id += len(listText)
-    tokens.extend(listText)
+    sep = re.split(r'\r\n|\r|\n', listString)
+    print('in tokenizeList')
+    print(sep)
+    for l in sep:
+        if l == '':
+            continue
+        print('in loop')
+        print(l)
+        match = matchWithListRegxp(l)
+        id += 1
+        listToken = Token()
+        listToken.create_token(parent, id, LIST, '')
+        parents.append(listToken)
+        tokens.append(listToken)
+        listText = tokenizeText(match[3], id, listToken)
+        id += len(listText)
+        tokens.extend(listText)
     return tokens
 
 def parse(markdownRow):
+    print('markdown')
     if matchWithListRegxp(markdownRow):
         return tokenizeList(markdownRow)
     return tokenizeText(markdownRow)

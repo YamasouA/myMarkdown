@@ -15,25 +15,33 @@ def getInsertPosition(content):
     state = 0
     closeTagParentheses = ['<', '>']
     position = 0
-    for c, i in enumerate(content.split()):
-        if state == 1 & c == closeTagParentheses[state]:
+    # print(content)
+    for i, c in enumerate(list(content)):
+        print(c, i)
+        if (state == 1) and (c == closeTagParentheses[state]):
             position = i
             break
-        elif state == 0 & c == closeTagParentheses[state]:
+        elif (state == 0) and (c == closeTagParentheses[state]):
             state += 1
+    # print(position)
     return position + 1
 
 def createMergedContent(currentToken, parentToken):
     content = ''
     if parentToken.elmType == 'strong':
+        # print("strong")
         content = '<strong>' + currentToken.content + '</strong>'
     elif parentToken.elmType == 'merged':
+        # print("merged")
         position = getInsertPosition(parentToken.content)
         content = parentToken.content[0:position] + currentToken.content + parentToken.content[position:]
     elif parentToken.elmType == 'li':
+        # print('li')
         content = '<li>' + currentToken.content + '</li>'
     elif parentToken.elmType == 'ul':
+        # print('ul')
         content = '<ul>' + currentToken.content + '</ul>'
+    # print(content)
     return content
 
 def generateHtmlString(tokens):
@@ -57,8 +65,10 @@ def mergeAsts(rearrangeAst):
     while not isAllElmParentRoot(rearrangeAst):
         index = 0
         while index < len(rearrangeAst):
+            # print(rearrangeAst[index].id)
             if rearrangeAst[index].parent != None:
                 if rearrangeAst[index].parent.elmType == 'root':
+                    # print('root')
                     index += 1
 
                 else:
