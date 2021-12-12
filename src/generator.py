@@ -32,6 +32,7 @@ def createMergedContent(currentToken, parentToken):
     print('createMergedContent')
     print(currentToken.content)
     print(parentToken.content)
+    print(parentToken.elmType)
     content = ''
     if parentToken.elmType == 'strong':
         # print("strong")

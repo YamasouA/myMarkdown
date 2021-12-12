@@ -85,14 +85,25 @@ def tokenizeList(listString):
         currentIndentLevel = len(match[1])
         currentIndent = match[1]
         print(currentIndentLevel, prevIndentLevel)
+        print(parent.id)
         if currentIndentLevel < prevIndentLevel:
+            print("case1")
+            print("listType: ", listType)
+            print("id: ", id)
             # change the parent
             for i in range(len(parents) - 1):
                 # ネストする前の親要素を見つける
                 if (len(parents[i].content) <= currentIndentLevel)  \
                     and (currentIndentLevel < len(parents[i+1].content)):
-                    parent = parents[i]
+                    print("cahnge parent")
+                    print("listType: ", listType)
+                    print("id: ", id)
+                    parent = parents[i].parent
+                    print("parent.id: ", parent.id)
         elif currentIndentLevel > prevIndentLevel:
+            print("case2")
+            print("listType: ", listType)
+            print("id: ", id)
             id += 1
             lastToken = tokens[-1]
             parentToken = lastToken.parent if match and lastToken.parent.elmType in ['code', 'italic', 'si', 'strong'] else lastToken
@@ -101,17 +112,25 @@ def tokenizeList(listString):
             parents.append(newParent)
             tokens.append(newParent)
             parent = newParent
+            print("parent.id: ", parent.id)
+            print("currentIndent: ", currentIndentLevel)
         prevIndentLevel = currentIndentLevel
 
         id += 1
+        print("out if")
+        print("id: ", id)
+        print("elmType: ", listType)
+        print("parent.id: ", parent.id)
         listToken = Token()
-        listToken.create_token(parent, id, LIST, '')
+        listToken.create_token(parent, id, LIST, currentIndent)
         parents.append(listToken)
         tokens.append(listToken)
         # contentはlistなら3番目OLなら4番目
         listContent = match[3] if listType==UL else match[4]
+        print("listContent: ", listContent)
         listText = tokenizeText(listContent, id, listToken)
         id += len(listText)
+        print("aft id: ", id)
         tokens.extend(listText)
     print(tokens)
     return sorted(tokens, key=lambda token: token.id)
