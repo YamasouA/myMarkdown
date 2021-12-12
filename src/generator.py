@@ -15,7 +15,8 @@ def getInsertPosition(content):
     state = 0
     closeTagParentheses = ['<', '>']
     position = 0
-    # print(content)
+    print('content')
+    print(content)
     for i, c in enumerate(list(content)):
         print(c, i)
         if (state == 1) and (c == closeTagParentheses[state]):
@@ -24,9 +25,13 @@ def getInsertPosition(content):
         elif (state == 0) and (c == closeTagParentheses[state]):
             state += 1
     # print(position)
+    print(position)
     return position + 1
 
 def createMergedContent(currentToken, parentToken):
+    print('createMergedContent')
+    print(currentToken.content)
+    print(parentToken.content)
     content = ''
     if parentToken.elmType == 'strong':
         # print("strong")
@@ -42,14 +47,19 @@ def createMergedContent(currentToken, parentToken):
         # print('ul')
         content = '<ul>' + currentToken.content + '</ul>'
     # print(content)
+    elif parentToken.elmType == 'ol':
+        content = '<ol>' + currentToken.content + '</ol>'
+    print(content)
     return content
 
 def generateHtmlString(tokens):
+    print('generateHtmlString')
     s = []
     for token in tokens:
         if token.content == "":
             continue
         s.append(token.content)
+        print(s)
     return ''.join(s[::-1])
 
 def findindex(rearrangeAst, currentToken):
