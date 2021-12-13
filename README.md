@@ -2,13 +2,20 @@
 
 # 概要
 - 自作のマークダウン
-- **bold**（対応）
-- -list
+- strong, ul, ol, h1~h4に対応
 ```bash
-input: 'normal text\n \n * **boldlist1**\n * list2'
-output: 'normal text <ul><li><strong>boldlist1</strong></li><li>list2</li></ul>'
+# **H1**
+## H2
+### H3
+#### H4
+text**strong**text2
+1. sample1 # 3
+    1. **sample2**
+    2. **sample3**
+2. sample4
 ```
-このような形で動きます
+このような入力の時に以下のような出力を得られます
+![Image 1](img/output.png)
 # 参考サイト
 - マークダウンパーサを作ろう
 https://www.m3tech.blog/entry/2021/08/23/124000

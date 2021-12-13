@@ -34,13 +34,16 @@ if __name__ == "__main__":
             * sample3
         2. sample4'''
     s = '''
-### **H1**
-#### H2
+# **H1**
+## H2
+### H3
+#### H4
 text**strong**text2
 1. sample1 # 3
     1. **sample2**
     2. **sample3**
-2. sample4'''
+2. sample4
+'''
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)
