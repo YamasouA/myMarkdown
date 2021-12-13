@@ -29,15 +29,18 @@ if __name__ == "__main__":
     # print('input: ' + s)
     # print('output: ' + ret)
     s = '''
-normal text
-1. sample
-    * sample2
-    * sample3
-        1. nest
-        2. nest2
-        3. nest3
-2. sample4
-** abcd **'''
+        1. sample
+            * sample2
+            * sample3
+        2. sample4'''
+    s = '''
+### **H1**
+#### H2
+text**strong**text2
+1. sample1 # 3
+    1. **sample2**
+    2. **sample3**
+2. sample4'''
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)

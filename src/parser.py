@@ -9,6 +9,14 @@ rootToken.create_token(None, 0, 'root', '')
 STRONG_ELM_REGXP = r'\*\*(.*?)\*\*'
 LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 OL_REGEXP = r'( *)((\d+)\. (.+))$'
+H1_REGEXP = r'^# (.+)$'
+TEXT_ELM_REGEXPS = [
+    {'elmType': 'h1', 'regexp': H1_REGEXP},
+    {'elmType': 'h2', 'regexp': r'^## (.+)$'},
+    {'elmType': 'h3', 'regexp': r'^### (.+)$'},
+    {'elmType': 'h4', 'regexp': r'^#### (.+)$'},
+    {'elmType': 'strong', 'regexp': r'\*\*(.*?)\*\*'},
+    ]
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
     elements = []
@@ -16,38 +24,64 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
     id = initialId
     
     def tokenize(originalText, p):
+        print("tokenize!!!!!!!!!!")
         nonlocal id
         processingText = originalText
         parent = p
         # 行が空になるまで繰り返す
         while (len(processingText) != 0):
-            matchArray, index = matchWithStrongRegxp(processingText)
+            print('Processing Text: ', processingText)
+            # matchArray, index = matchWithStrongRegxp(processingText)
             # matchArray[0] -> **bold**
             # matchArray[1] -> bold
-            
-            # ****にマッチしないとき、テキストトークンを作成する
-            if matchArray is  None:
+            matchArray = []
+            for regexp in TEXT_ELM_REGEXPS:
+                # print('processingText: ', processingText, ' regexp: ', regexp["regexp"])
+                find = re.search(regexp["regexp"], processingText, flags=re.M)
+                # print('find: ', find)
+                # index = processingText.find(regexp["regexp"])
+                index = find.start() if find else -1
+                
+                # print(index)
+                matchArray.append({'elmType': regexp["elmType"], 'matchArray': find, 'index': index})
+            # print(matchArray)
+            matchArray = list(filter(lambda x: x["matchArray"] != None, matchArray))
+            # print("matchArray")
+            # print(matchArray)
+            if len(matchArray) == 0:
                 id += 1
                 onlyText = genTextElement(id, processingText, parent)
                 processingText = ''
                 elements.append(onlyText)
             else:
-                if (index > 0):
+                # 最も外側の状態をでマッチしたelementを保持する
+                # **__itaric__**みたいに入れ子になっているのに対応する
+                outerElement = ''
+                prev = 10e8
+                for match in matchArray:
+                    if match["index"] < prev:
+                        prev = match["index"]
+                        outerElement = match
+                # print("outerElement: ", outerElement["index"])
+                if (outerElement["index"] > 0):
                     # aaa**bb**cc -> TEXT_TOKEN + **bb**cc　にする
-                    text = processingText[:index]
+                    text = processingText[:outerElement["index"]]
                     id += 1
                     textElm = genTextElement(id, text, parent)
                     elements.append(textElm)
-                    processingText = processingText.replace(text, '')
+                    processingText = processingText.replace(text, '', 1)
                 id += 1
-                elm = genStrongElement(id, parent)
+                elmType = outerElement["elmType"]
+                content = outerElement["matchArray"][1]
+                elm = Token()
+                elm.create_token(id=id, elmType=elmType, content='', parent=parent)
                 parent = elm
                 elements.append(elm)
-
-                processingText = processingText.replace(matchArray[0], '')
-
-                tokenize(matchArray[1], parent)
-                parent = p
+                print("processing Text bef: ", processingText)
+                processingText = processingText.replace(outerElement["matchArray"][0], '')
+                print("processing Text aft: ", processingText)
+                tokenize(content, parent)
+            parent = p
     tokenize(textElement, parent)
     return elements
 
@@ -98,6 +132,7 @@ def tokenizeList(listString):
                     print("cahnge parent")
                     print("listType: ", listType)
                     print("id: ", id)
+                    print("len: ", len(parents))
                     parent = parents[i].parent
                     print("parent.id: ", parent.id)
         elif currentIndentLevel > prevIndentLevel:
@@ -106,6 +141,7 @@ def tokenizeList(listString):
             print("id: ", id)
             id += 1
             lastToken = tokens[-1]
+            # text Tokenの親トークンを見る（strongとかならさらに親を見る）
             parentToken = lastToken.parent if match and lastToken.parent.elmType in ['code', 'italic', 'si', 'strong'] else lastToken
             newParent = Token()
             newParent.create_token(id=id, elmType=listType, content=currentIndent, parent=parentToken.parent)

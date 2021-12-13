@@ -50,6 +50,14 @@ def createMergedContent(currentToken, parentToken):
     # print(content)
     elif parentToken.elmType == 'ol':
         content = '<ol>' + currentToken.content + '</ol>'
+    elif parentToken.elmType == 'h1':
+        content = '<h1>' + currentToken.content + '</h1>'
+    elif parentToken.elmType == 'h2':
+        content = '<h2>' + currentToken.content + '</h2>'
+    elif parentToken.elmType == 'h3':
+        content = '<h3>' + currentToken.content + '</h3>'
+    elif parentToken.elmType == 'h4':
+        content = '<h4>' + currentToken.content + '</h4>'
     print(content)
     return content
 
