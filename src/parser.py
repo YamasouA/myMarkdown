@@ -184,8 +184,13 @@ def tokenizeBlockquote(blockquote):
     for quote in sep:
         match = re.match(BLOCKQUOTE_REGEXP, quote)
         if match:
+            # -2するのは、> nだと[>, n]になるのでnの分で1
+            # >がネストレベル1と対応させるため
             nestLevel = len(re.split('>', match[1])) - 2
             if prevNestLevel < nestLevel:
+                # >
+                # >>>
+                # この時に上のblockquoteに加えて2回分ネストする
                 for _ in range(nestLevel - prevNestLevel):
                     id += 1
                     newBlockquote = Token()
@@ -198,6 +203,7 @@ def tokenizeBlockquote(blockquote):
                     parent = newBlockquote
                 prevNestLevel = nestLevel
             else:
+                # ネストレベルが同じなら、同じparentにつければ良い
                 textTokens = tokenizeText(match[2], id, parent)
                 id += len(textTokens)
                 tokens.extend(textTokens)
