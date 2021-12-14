@@ -41,8 +41,8 @@ if __name__ == "__main__":
 text**strong**text2
 1. sample1 # 3
     1. **sample2**
-    2. **sample3**
-2. sample4
+    2. **__sample3__**
+2. __sample4__
 '''
     ret = convertToHTMLString(s)
     print('input: ' + s)

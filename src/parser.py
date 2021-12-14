@@ -16,6 +16,7 @@ TEXT_ELM_REGEXPS = [
     {'elmType': 'h3', 'regexp': r'^### (.+)$'},
     {'elmType': 'h4', 'regexp': r'^#### (.+)$'},
     {'elmType': 'strong', 'regexp': r'\*\*(.*?)\*\*'},
+    {'elmType': 'italic', 'regexp': r'__(.+)__'},
     ]
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
