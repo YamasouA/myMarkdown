@@ -60,6 +60,8 @@ def createMergedContent(currentToken, parentToken):
         content = '<h3>' + currentToken.content + '</h3>'
     elif parentToken.elmType == 'h4':
         content = '<h4>' + currentToken.content + '</h4>'
+    elif parentToken.elmType == 'blockquote':
+        content = '<blockquote>' + currentToken.content + '</blockquote>'
     print(content)
     return content
 

@@ -8,13 +8,16 @@ STRONG = 'strong'
 STRONG_ELM_REGXP = r'\*\*(.*?)\*\*'
 LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 OL_REGEXP = r'^( *)((\d+)\. (.+))$'
+BLOCKQUOTE_REGEXP = r'([>| ]+)(.+)'
 
 def analize(markdown):
     NEUTRAL_STATE = 'neutral_state'
     LIST_STATE = 'list_state'
+    BLOCKQUOTE_STATE = 'blockquote_state'
     state = NEUTRAL_STATE
 
     lists = ''
+    blockquote = ''
 
     rawMdArray = re.split(r'\r\n|\r|\n', markdown)
     print(rawMdArray)
@@ -35,7 +38,25 @@ def analize(markdown):
         # neutral_stateのとき
         if len(lists) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
             mdArray.append({'mdType': 'list', 'content': lists})
-        if len(lists) == 0 and state != LIST_STATE and len(md) != 0:
+
+        blockquoteMatch = re.match(BLOCKQUOTE_REGEXP, md)
+        if state == NEUTRAL_STATE and blockquoteMatch:
+            state = BLOCKQUOTE_STATE
+            blockquote += md  + '\n'
+        elif state == BLOCKQUOTE_STATE and len(md) > 0:
+            blockquote += md + '\n'
+        elif state == BLOCKQUOTE_STATE and md == '':
+            state = NEUTRAL_STATE
+        if len(blockquote) > 0 and (state ==NEUTRAL_STATE or index == len(rawMdArray) - 1):
+            # minuteでは'conte': blockquote.replace('\n$', '')になる
+            mdArray.append({'mdType': 'blockquote', 'content': blockquote})
+            blockquote = ''
+
+
+        if len(lists) == 0 and \
+            state != LIST_STATE and \
+            len(md) != 0 and \
+            len(blockquote) == 0:
             mdArray.append({'mdType': 'text', 'content': md})
     return mdArray
     

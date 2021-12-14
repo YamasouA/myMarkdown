@@ -1,7 +1,7 @@
 import re
 from models.myToken import Token
 
-from lexer import genStrongElement, genTextElement, matchWithListRegxp, matchWithStrongRegxp
+from lexer import BLOCKQUOTE_REGEXP, genStrongElement, genTextElement, matchWithListRegxp, matchWithStrongRegxp
 
 rootToken = Token()
 rootToken.create_token(None, 0, 'root', '')
@@ -10,6 +10,7 @@ STRONG_ELM_REGXP = r'\*\*(.*?)\*\*'
 LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 OL_REGEXP = r'( *)((\d+)\. (.+))$'
 H1_REGEXP = r'^# (.+)$'
+BLOCKQUOTE_REGEXP = r'([>| ]+)(.+)'
 TEXT_ELM_REGEXPS = [
     {'elmType': 'h1', 'regexp': H1_REGEXP},
     {'elmType': 'h2', 'regexp': r'^## (.+)$'},
@@ -172,6 +173,40 @@ def tokenizeList(listString):
     print(tokens)
     return sorted(tokens, key=lambda token: token.id)
 
+def tokenizeBlockquote(blockquote):
+    id = 1
+    parent = Token()
+    parent.create_token(id=id, elmType='blockquote', content='', parent=rootToken)
+    tokens = [parent]
+    parents = [{'level': 1, 'token': parent}]
+    prevNestLevel = 0
+    sep = re.split(r'\n', blockquote)
+    for quote in sep:
+        match = re.match(BLOCKQUOTE_REGEXP, quote)
+        if match:
+            nestLevel = len(re.split('>', match[1])) - 2
+            if prevNestLevel < nestLevel:
+                for _ in range(nestLevel - prevNestLevel):
+                    id += 1
+                    newBlockquote = Token()
+                    newBlockquote.create_token(id=id, elmType='blockquote', content='', parent=parent)
+                    parents.append({'level': nestLevel, 'token': newBlockquote})
+                    textTokens = tokenizeText(match[2], id, newBlockquote)
+                    id += len(textTokens)
+                    tokens.append(newBlockquote)
+                    tokens.extend(textTokens)
+                    parent = newBlockquote
+                prevNestLevel = nestLevel
+            else:
+                textTokens = tokenizeText(match[2], id, parent)
+                id += len(textTokens)
+                tokens.extend(textTokens)
+        else:
+            textTokens = tokenizeText(quote, id, parent)
+            id += len(textTokens)
+            tokens.extend(textTokens)
+    return tokens
+
 def parse(markdownRow):
     # print('markdown')
     # if matchWithListRegxp(markdownRow):
@@ -180,4 +215,6 @@ def parse(markdownRow):
 
     if markdownRow["mdType"] == 'list':
         return tokenizeList(markdownRow["content"])
+    elif markdownRow["mdType"] == 'blockquote':
+        return tokenizeBlockquote(markdownRow["content"])
     return tokenizeText(markdownRow["content"])
