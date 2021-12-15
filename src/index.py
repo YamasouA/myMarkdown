@@ -47,6 +47,7 @@ text**strong**text2
 > blockquote1.2
 >> blockquote2
 >>> blockquote3
+~~strike~~
 '''
     ret = convertToHTMLString(s)
     print('input: ' + s)

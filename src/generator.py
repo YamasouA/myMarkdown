@@ -39,6 +39,8 @@ def createMergedContent(currentToken, parentToken):
         content = '<strong>' + currentToken.content + '</strong>'
     elif parentToken.elmType == 'italic':
         content = '<i>' + currentToken.content + '</i>'
+    elif parentToken.elmType == 'si':
+        content = '<strike>' + currentToken.content + '</strike>'
     elif parentToken.elmType == 'merged':
         # print("merged")
         position = getInsertPosition(parentToken.content)
