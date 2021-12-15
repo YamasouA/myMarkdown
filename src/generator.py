@@ -90,7 +90,7 @@ def mergeAsts(rearrangeAst):
     while not isAllElmParentRoot(rearrangeAst):
         index = 0
         while index < len(rearrangeAst):
-            # print(rearrangeAst[index].id)
+            print(rearrangeAst[index].content)
             if rearrangeAst[index].parent != None:
                 if rearrangeAst[index].parent.elmType == 'root':
                     # print('root')

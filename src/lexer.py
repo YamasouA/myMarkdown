@@ -43,20 +43,20 @@ def analize(markdown):
         if state == NEUTRAL_STATE and blockquoteMatch:
             state = BLOCKQUOTE_STATE
             blockquote += md  + '\n'
-        elif state == BLOCKQUOTE_STATE and len(md) > 0:
+        elif state == BLOCKQUOTE_STATE and blockquoteMatch:
             blockquote += md + '\n'
-        elif state == BLOCKQUOTE_STATE and md == '':
+        elif state == BLOCKQUOTE_STATE and blockquoteMatch == None:
             state = NEUTRAL_STATE
         if len(blockquote) > 0 and (state ==NEUTRAL_STATE or index == len(rawMdArray) - 1):
             # minuteでは'conte': blockquote.replace('\n$', '')になる
             mdArray.append({'mdType': 'blockquote', 'content': blockquote})
             blockquote = ''
 
-
         if len(lists) == 0 and \
             state != LIST_STATE and \
             len(md) != 0 and \
-            len(blockquote) == 0:
+            len(blockquote) == 0 and\
+            state != BLOCKQUOTE_STATE:
             mdArray.append({'mdType': 'text', 'content': md})
     return mdArray
     

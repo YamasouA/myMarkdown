@@ -219,7 +219,9 @@ def parse(markdownRow):
     # if matchWithListRegxp(markdownRow):
     #     return tokenizeList(markdownRow)
     # return tokenizeText(markdownRow)
-
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(markdownRow["content"])
+    print(markdownRow["mdType"])
     if markdownRow["mdType"] == 'list':
         return tokenizeList(markdownRow["content"])
     elif markdownRow["mdType"] == 'blockquote':
