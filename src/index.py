@@ -50,6 +50,7 @@ text**strong**text2
 ~~strike~~
 abcd
 efgh
+![img](https://avatars2.githubusercontent.com/u/11307908)
 '''
     ret = convertToHTMLString(s)
     print('input: ' + s)

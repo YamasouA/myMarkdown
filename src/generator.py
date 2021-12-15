@@ -54,6 +54,10 @@ def createMergedContent(currentToken, parentToken):
     # print(content)
     elif parentToken.elmType == 'ol':
         content = '<ol>' + currentToken.content + '</ol>'
+    elif parentToken.elmType == 'img':
+        src = parentToken.attributes[0]['attrValue']
+        print(src)
+        content = '<img src="' + src + '" alt="' + currentToken.content + '" />'
     elif parentToken.elmType == 'h1':
         content = '<h1>' + currentToken.content + '</h1>'
     elif parentToken.elmType == 'h2':

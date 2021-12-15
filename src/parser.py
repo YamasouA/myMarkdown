@@ -19,6 +19,7 @@ TEXT_ELM_REGEXPS = [
     {'elmType': 'strong', 'regexp': r'\*\*(.*?)\*\*'},
     {'elmType': 'italic', 'regexp': r'__(.+)__'},
     {'elmType': 'si', 'regexp': r'~~(.+)~~'},
+    {'elmType': 'img', 'regexp': r'\!\[(.*)\]\((.+)\)'},
     ]
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
@@ -73,11 +74,14 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                     textElm = genTextElement(id, text, parent)
                     elements.append(textElm)
                     processingText = processingText.replace(text, '', 1)
+                attributes = []
+                if outerElement["elmType"] == 'img':
+                    attributes.append({'attrName': 'src', 'attrValue': outerElement["matchArray"][2]})
                 id += 1
                 elmType = outerElement["elmType"]
                 content = outerElement["matchArray"][1]
                 elm = Token()
-                elm.create_token(id=id, elmType=elmType, content='', parent=parent)
+                elm.create_token(id=id, elmType=elmType, content='', parent=parent, attributes=attributes)
                 parent = elm
                 elements.append(elm)
                 print("processing Text bef: ", processingText)
