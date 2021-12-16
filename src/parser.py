@@ -20,6 +20,7 @@ TEXT_ELM_REGEXPS = [
     {'elmType': 'italic', 'regexp': r'__(.+)__'},
     {'elmType': 'si', 'regexp': r'~~(.+)~~'},
     {'elmType': 'img', 'regexp': r'\!\[(.*)\]\((.+)\)'},
+    {'elmType': 'link', 'regexp': r'\[(.*)\]\((.*)\)'},
     ]
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
@@ -77,6 +78,8 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                 attributes = []
                 if outerElement["elmType"] == 'img':
                     attributes.append({'attrName': 'src', 'attrValue': outerElement["matchArray"][2]})
+                elif outerElement["elmType"] == 'link':
+                    attributes.append({'attrName': 'href', 'attrValue': outerElement["matchArray"][2]})
                 id += 1
                 elmType = outerElement["elmType"]
                 content = outerElement["matchArray"][1]

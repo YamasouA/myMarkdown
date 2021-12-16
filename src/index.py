@@ -51,6 +51,7 @@ text**strong**text2
 abcd
 efgh
 ![img](https://avatars2.githubusercontent.com/u/11307908)
+[asmsuechan.com](https://asmsuechan.com)
 '''
     ret = convertToHTMLString(s)
     print('input: ' + s)

@@ -2,7 +2,7 @@
 
 # 概要
 - 自作のマークダウン
-- strong, i, strike, ul, ol, h1~h4, blockquote, imgに対応
+- strong, i, strike, ul, ol, h1~h4, blockquote, img, aに対応
 ```bash
 # **H1**
 ## H2
