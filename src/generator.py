@@ -61,6 +61,8 @@ def createMergedContent(currentToken, parentToken):
     elif parentToken.elmType == 'link':
         href = parentToken.attributes[0]['attrValue']
         content = '<a href="' + href + '">' + currentToken.content + '</a>'
+    elif parentToken.elmType == 'code':
+        content = '<code>' + currentToken.content + '</code>'
     elif parentToken.elmType == 'h1':
         content = '<h1>' + currentToken.content + '</h1>'
     elif parentToken.elmType == 'h2':

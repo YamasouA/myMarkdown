@@ -21,6 +21,7 @@ TEXT_ELM_REGEXPS = [
     {'elmType': 'si', 'regexp': r'~~(.+)~~'},
     {'elmType': 'img', 'regexp': r'\!\[(.*)\]\((.+)\)'},
     {'elmType': 'link', 'regexp': r'\[(.*)\]\((.*)\)'},
+    {'elmType': 'code', 'regexp': r'```(.+)'},
     ]
 
 def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
@@ -76,21 +77,29 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                     elements.append(textElm)
                     processingText = processingText.replace(text, '', 1)
                 attributes = []
-                if outerElement["elmType"] == 'img':
-                    attributes.append({'attrName': 'src', 'attrValue': outerElement["matchArray"][2]})
-                elif outerElement["elmType"] == 'link':
-                    attributes.append({'attrName': 'href', 'attrValue': outerElement["matchArray"][2]})
-                id += 1
-                elmType = outerElement["elmType"]
-                content = outerElement["matchArray"][1]
-                elm = Token()
-                elm.create_token(id=id, elmType=elmType, content='', parent=parent, attributes=attributes)
-                parent = elm
-                elements.append(elm)
-                print("processing Text bef: ", processingText)
-                processingText = processingText.replace(outerElement["matchArray"][0], '')
-                print("processing Text aft: ", processingText)
-                tokenize(content, parent)
+                if parent.elmType == 'code':
+                    id += 1
+                    codeContent = genTextElement(id, outerElement["matchArray"][1], parent)
+                    elements.append(codeContent)
+                    processingText = processingText.replace(outerElement["matchArray"][0], '')
+                else:
+                    if outerElement["elmType"] == 'img':
+                        attributes.append({'attrName': 'src', 'attrValue': outerElement["matchArray"][2]})
+                    elif outerElement["elmType"] == 'link':
+                        attributes.append({'attrName': 'href', 'attrValue': outerElement["matchArray"][2]})
+                    id += 1
+                    elmType = outerElement["elmType"]
+                    content = outerElement["matchArray"][1]
+                    elm = Token()
+                    if len(attributes) == 0:
+                        attributes.append('')
+                    elm.create_token(id=id, elmType=elmType, content='', parent=parent, attributes=attributes)
+                    parent = elm
+                    elements.append(elm)
+                    print("processing Text bef: ", processingText)
+                    processingText = processingText.replace(outerElement["matchArray"][0], '')
+                    print("processing Text aft: ", processingText)
+                    tokenize(content, parent)
             parent = p
     tokenize(textElement, parent)
     return elements

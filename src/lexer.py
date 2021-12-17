@@ -9,15 +9,18 @@ STRONG_ELM_REGXP = r'\*\*(.*?)\*\*'
 LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 OL_REGEXP = r'^( *)((\d+)\. (.+))$'
 BLOCKQUOTE_REGEXP = r'([>| ]+)(.+)'
+PRE_REGEXP = r'^```'
 
 def analize(markdown):
     NEUTRAL_STATE = 'neutral_state'
     LIST_STATE = 'list_state'
     BLOCKQUOTE_STATE = 'blockquote_state'
+    PRE_STATE = 'pre_state'
     state = NEUTRAL_STATE
 
     lists = ''
     blockquote = ''
+    pre = ''
 
     rawMdArray = re.split(r'\r\n|\r|\n', markdown)
     print(rawMdArray)
@@ -39,6 +42,21 @@ def analize(markdown):
         if len(lists) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
             mdArray.append({'mdType': 'list', 'content': lists})
 
+        preMatch = re.match(PRE_REGEXP, md)
+        if state == NEUTRAL_STATE and preMatch:
+            pre += md
+            state = PRE_STATE
+        elif state == PRE_STATE and preMatch:
+            state = NEUTRAL_STATE
+            mdArray.append({'mdType': 'pre', 'content': pre})
+            pre = ''
+        elif state ==PRE_STATE and preMatch == None:
+            pre += md + '\n'
+        if len(pre) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
+            pre += '```'
+            mdArray.append({'mdType': 'pre', 'content': pre})
+            pre = ''
+
         blockquoteMatch = re.match(BLOCKQUOTE_REGEXP, md)
         if state == NEUTRAL_STATE and blockquoteMatch:
             state = BLOCKQUOTE_STATE
@@ -55,8 +73,10 @@ def analize(markdown):
         if len(lists) == 0 and \
             state != LIST_STATE and \
             len(md) != 0 and \
-            len(blockquote) == 0 and\
-            state != BLOCKQUOTE_STATE:
+            len(blockquote) == 0 and \
+            state != BLOCKQUOTE_STATE and \
+            len(pre) == 0 and \
+            state != PRE_STATE:
             mdArray.append({'mdType': 'text', 'content': md})
     return mdArray
     
