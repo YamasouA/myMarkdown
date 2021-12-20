@@ -10,17 +10,23 @@ LIST_REGXP = r'^( *)([-|\*|\+] (.+))$'
 OL_REGEXP = r'^( *)((\d+)\. (.+))$'
 BLOCKQUOTE_REGEXP = r'([>| ]+)(.+)'
 PRE_REGEXP = r'^```'
+TABLE_HEAD_BODY_REGEXP = r'\|(.+)\|'
+TABLE_ALIGN_REGEXP = r'\|([- | :]+\|'
 
 def analize(markdown):
     NEUTRAL_STATE = 'neutral_state'
     LIST_STATE = 'list_state'
     BLOCKQUOTE_STATE = 'blockquote_state'
     PRE_STATE = 'pre_state'
+    TABLE_HEAD_STATE = 'table_head_state'
+    TABLE_ALIGN_STATE = 'table_align_state'
+    TABLE_BODY_STATE = 'table_body_state'
     state = NEUTRAL_STATE
 
     lists = ''
     blockquote = ''
     pre = ''
+    table = ''
 
     rawMdArray = re.split(r'\r\n|\r|\n', markdown)
     print(rawMdArray)
@@ -56,6 +62,25 @@ def analize(markdown):
             pre += '```'
             mdArray.append({'mdType': 'pre', 'content': pre})
             pre = ''
+
+        tableHeadBodyMatch = re.search(TABLE_HEAD_BODY_REGEXP, md)
+        tableAlignMatch = re.search(TABLE_ALIGN_REGEXP, md)
+        if state == NEUTRAL_STATE and tableHeadBodyMatch:
+            state = TABLE_HEAD_STATE
+            table += md + '\n'
+        elif state == TABLE_HEAD_STATE and tableAlignMatch:
+            state = TABLE_ALIGN_STATE
+            table += md + '\n'
+        elif state == TABLE_HEAD_STATE and tableAlignMatch == None:
+            state = NEUTRAL_STATE
+        elif state == TABLE_ALIGN_STATE and tableHeadBodyMatch:
+            state = TABLE_BODY_STATE
+            table += md + '\n'
+        elif state == TABLE_BODY_STATE and tableHeadBodyMatch == None:
+            state = NEUTRAL_STATE
+        if len(table) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
+            mdArray.append({'mdType': 'table', 'content': table})
+            table = ''
 
         blockquoteMatch = re.match(BLOCKQUOTE_REGEXP, md)
         if state == NEUTRAL_STATE and blockquoteMatch:
