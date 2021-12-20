@@ -68,7 +68,27 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                     if match["index"] < prev:
                         prev = match["index"]
                         outerElement = match
-                # print("outerElement: ", outerElement["index"])
+                # print("outerElement: ", type(outerElement["elmType"]))
+                print("outerElement: ", parent.elmType)
+                if outerElement["elmType"] != 'h1' and \
+                    outerElement["elmType"] != 'h2' and \
+                    outerElement["elmType"] != 'h3' and \
+                    outerElement["elmType"] != 'h4' and \
+                    parent.elmType != 'h1' and \
+                    parent.elmType != 'h2' and \
+                    parent.elmType != 'h3' and \
+                    parent.elmType != 'h4' and \
+                    parent.elmType != 'ul' and \
+                    parent.elmType != 'li' and \
+                    parent.elmType != 'ol' and \
+                    parent.elmType != 'code' and \
+                    parent.elmType != 'link':
+                    id += 1
+                    pToken = Token()
+                    pToken.create_token(id=id, elmType='paragraph', content='', parent=parent)
+                    parent = pToken
+                    elements.append(parent)
+
                 if (outerElement["index"] > 0):
                     # aaa**bb**cc -> TEXT_TOKEN + **bb**cc　にする
                     text = processingText[:outerElement["index"]]
@@ -230,6 +250,74 @@ def tokenizeBlockquote(blockquote):
             tokens.extend(textTokens)
     return tokens
 
+def tokenizeTable(tableString):
+    id = 0
+    tableToken = Token()
+    tableToken.create_token(id=id, elmType='table', content='', parent=rootToken)
+    tokens = [tableToken]
+    print("=======================")
+    print(tableString)
+    # tableLines = re.split('\n', tableString)
+    tableLines = [t for t in re.split('\n', tableString) if not t == '']
+    print('tableLines: ', tableLines)
+    attributes = []
+    if len(tableLines) >= 2:
+        text = re.split('\|', tableLines[1])
+        for tableAlign in text:
+            if re.match('^:([-]+)$', tableAlign):
+                attributes.append({'attrName': 'align', 'attrValue': 'left'})
+            elif re.match('^([-]+):$', tableAlign):
+                attributes.append({'attrName': 'align', 'attrValue': 'right'})
+            elif re.match('^:([-]+):$', tableAlign):
+                attributes.append({'attrName': 'align', 'attrValue': 'center'})
+    print("=======================")
+    print(attributes)
+    for i, t in enumerate(tableLines):
+        if i == 0:
+            # Table Head
+            id += 1
+            theadToken = Token()
+            theadToken.create_token(id=id, elmType='thead', content='', parent=tableToken)
+            tokens.append(theadToken)
+            id += 1
+            tableRow = Token()
+            tableRow.create_token(id=id, elmType='tr', content='', parent=theadToken)
+            tokens.append(tableRow)
+            t_split = [t for t in re.split('\|', t) if not t == '']
+            print(t_split)
+            for j, headItem in enumerate(t_split):
+                print(headItem)
+                print(j)
+                alignAttributes = [attributes[j]] if len(attributes) > 0 else []
+                id += 1
+                tableHead = Token()
+                tableHead.create_token(id=id, elmType='th', content='', parent=tableRow, attributes=alignAttributes)
+                textTokens = tokenizeText(headItem, id, tableHead)
+                id += len(textTokens)
+                tokens.append(tableHead)
+                tokens.extend(textTokens)
+        elif i > 1:
+            # Skip Alignment
+            # Table Body
+            id += 1
+            tbodyToken = Token()
+            tbodyToken.create_token(id=id, elmType='tbody', content='', parent=tableToken)
+            tokens.append(tbodyToken)
+            tableRow = Token()
+            tableRow.create_token(id=id, elmType='tr', content='', parent=tbodyToken)
+            tokens.append(tableRow)
+            t_split = [t for t in re.split('\|', t) if not t == '']
+            for j, bodyItem in enumerate(t_split):
+                print(j)
+                id += 1
+                tableData = Token()
+                tableData.create_token(id=id, elmType='td', content='', parent=tbodyToken, attributes=[attributes[j]])
+                textTokens = tokenizeText(bodyItem, id, tableData)
+                id += len(textTokens)
+                tokens.append(tableData)
+                tokens.extend(textTokens)
+    return tokens
+
 def parse(markdownRow):
     # print('markdown')
     # if matchWithListRegxp(markdownRow):
@@ -242,4 +330,6 @@ def parse(markdownRow):
         return tokenizeList(markdownRow["content"])
     elif markdownRow["mdType"] == 'blockquote':
         return tokenizeBlockquote(markdownRow["content"])
+    elif markdownRow["mdType"] == 'table':
+        return tokenizeTable(markdownRow["content"])
     return tokenizeText(markdownRow["content"])

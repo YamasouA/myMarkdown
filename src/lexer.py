@@ -11,7 +11,7 @@ OL_REGEXP = r'^( *)((\d+)\. (.+))$'
 BLOCKQUOTE_REGEXP = r'([>| ]+)(.+)'
 PRE_REGEXP = r'^```'
 TABLE_HEAD_BODY_REGEXP = r'\|(.+)\|'
-TABLE_ALIGN_REGEXP = r'\|([- | :]+\|'
+TABLE_ALIGN_REGEXP = r'\|([- | :]+)\|'
 
 def analize(markdown):
     NEUTRAL_STATE = 'neutral_state'
@@ -28,7 +28,8 @@ def analize(markdown):
     pre = ''
     table = ''
 
-    rawMdArray = re.split(r'\r\n|\r|\n', markdown)
+    # rawMdArray = re.split(r'\r\n|\r|\n', markdown)
+    rawMdArray = [t for t in re.split(r'\r\n|\r|\n', markdown) if not t == '']
     print(rawMdArray)
     mdArray = []
     for index, md in enumerate(rawMdArray):
@@ -100,6 +101,10 @@ def analize(markdown):
             len(md) != 0 and \
             len(blockquote) == 0 and \
             state != BLOCKQUOTE_STATE and \
+            len(table) != 0 and \
+            state != TABLE_HEAD_STATE and \
+            state != TABLE_BODY_STATE and \
+            state != TABLE_ALIGN_STATE and \
             len(pre) == 0 and \
             state != PRE_STATE:
             mdArray.append({'mdType': 'text', 'content': md})

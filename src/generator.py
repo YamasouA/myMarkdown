@@ -29,12 +29,14 @@ def getInsertPosition(content):
     return position + 1
 
 def createMergedContent(currentToken, parentToken):
-    print('createMergedContent')
+    print('=================createMergedContent====================')
     print(currentToken.content)
     print(parentToken.content)
     print(parentToken.elmType)
     content = ''
-    if parentToken.elmType == 'strong':
+    if parentToken.elmType == 'paragraph':
+        content = '<p>' + currentToken.content + '</p>'
+    elif parentToken.elmType == 'strong':
         # print("strong")
         content = '<strong>' + currentToken.content + '</strong>'
     elif parentToken.elmType == 'italic':
@@ -73,6 +75,20 @@ def createMergedContent(currentToken, parentToken):
         content = '<h4>' + currentToken.content + '</h4>'
     elif parentToken.elmType == 'blockquote':
         content = '<blockquote>' + currentToken.content + '</blockquote>'
+    elif parentToken.elmType == 'table':
+        content = '<table>' + currentToken.content + '</table>'
+    elif parentToken.elmType == 'tbody':
+        content = '<tbody>' + currentToken.content + '</tbody>'
+    elif parentToken.elmType == 'thead':
+        content = '<thead>' + currentToken.content + '</thead>'
+    elif parentToken.elmType == 'tr':
+        content = '<tr>' + currentToken.content + '</tr>'
+    elif parentToken.elmType == 'th':
+        thAttributes = parentToken.attributes[0]['attrName'] + '=' + parentToken.attributes[0]['attrValue']
+        content = '<th ' + thAttributes + '>' + currentToken.content + '</th>'
+    elif parentToken.elmType == 'td':
+        tdAttributes = parentToken.attributes[0]['attrName'] + '=' + parentToken.attributes[0]['attrValue']
+        content = '<td ' + tdAttributes + '>' + currentToken.content + '</td>'
     print(content)
     return content
 

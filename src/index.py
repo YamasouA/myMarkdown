@@ -56,6 +56,11 @@ efgh
 code test
 ```
 '''
+    s = '''
+|test|test2|test3|
+|:---|:---:|----:|
+|table1|table2|table3|
+'''
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)
