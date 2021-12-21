@@ -29,11 +29,6 @@ if __name__ == "__main__":
     # print('input: ' + s)
     # print('output: ' + ret)
     s = '''
-        1. sample
-            * sample2
-            * sample3
-        2. sample4'''
-    s = '''
 # **H1**
 ## H2
 ### H3
@@ -55,12 +50,11 @@ efgh
 ```
 code test
 ```
-'''
-    s = '''
 |test|test2|test3|
 |:---|:---:|----:|
 |table1|table2|table3|
 '''
+
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)

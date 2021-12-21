@@ -57,6 +57,7 @@ def analize(markdown):
             state = NEUTRAL_STATE
             mdArray.append({'mdType': 'pre', 'content': pre})
             pre = ''
+            continue
         elif state ==PRE_STATE and preMatch == None:
             pre += md + '\n'
         if len(pre) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
@@ -101,7 +102,7 @@ def analize(markdown):
             len(md) != 0 and \
             len(blockquote) == 0 and \
             state != BLOCKQUOTE_STATE and \
-            len(table) != 0 and \
+            len(table) == 0 and \
             state != TABLE_HEAD_STATE and \
             state != TABLE_BODY_STATE and \
             state != TABLE_ALIGN_STATE and \
