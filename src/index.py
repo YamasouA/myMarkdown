@@ -29,19 +29,7 @@ if __name__ == "__main__":
     # print('input: ' + s)
     # print('output: ' + ret)
     s = '''
-# **H1**
-## H2
-### H3
-#### H4
 text**strong**text2
-1. sample1 # 3
-    1. **sample2**
-    2. **__sample3__**
-2. __sample4__
-> blockquote1.1
-> blockquote1.2
->> blockquote2
->>> blockquote3
 ~~strike~~
 abcd
 efgh
@@ -50,9 +38,6 @@ efgh
 ```
 code test
 ```
-|test|test2|test3|
-|:---|:---:|----:|
-|table1|table2|table3|
 '''
 
     ret = convertToHTMLString(s)

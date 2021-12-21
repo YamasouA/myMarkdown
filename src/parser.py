@@ -30,10 +30,11 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
     id = initialId
     
     def tokenize(originalText, p):
-        print("tokenize!!!!!!!!!!")
+        # print("tokenize!!!!!!!!!!")
         nonlocal id
         processingText = originalText
         parent = p
+        pToken = p
         # 行が空になるまで繰り返す
         while (len(processingText) != 0):
             print('Processing Text: ', processingText)
@@ -55,8 +56,15 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
             # print("matchArray")
             # print(matchArray)
             if len(matchArray) == 0:
+                print('genText: ', parent.elmType)
+                if pToken.elmType == 'root':
+                    id += 1
+                    pToken = Token()
+                    pToken.create_token(id=id, elmType='paragraph', content='', parent=parent)
+                    parent = pToken
+                    elements.append(parent)
                 id += 1
-                onlyText = genTextElement(id, processingText, parent)
+                onlyText = genTextElement(id, processingText, pToken)
                 processingText = ''
                 elements.append(onlyText)
             else:
@@ -69,11 +77,13 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                         prev = match["index"]
                         outerElement = match
                 # print("outerElement: ", type(outerElement["elmType"]))
-                print("outerElement: ", parent.elmType)
+                print("outerElement: ", outerElement["elmType"])
+                print("parentElmtype: ", parent.elmType)
                 if outerElement["elmType"] != 'h1' and \
                     outerElement["elmType"] != 'h2' and \
                     outerElement["elmType"] != 'h3' and \
                     outerElement["elmType"] != 'h4' and \
+                    outerElement["elmType"] != 'code' and \
                     parent.elmType != 'h1' and \
                     parent.elmType != 'h2' and \
                     parent.elmType != 'h3' and \
@@ -144,40 +154,40 @@ def tokenizeList(listString):
     prevIndentLevel = 0
 
     sep = re.split(r'\r\n|\r|\n', listString)
-    print('in tokenizeList')
-    print(sep)
+    # print('in tokenizeList')
+    # print(sep)
     for l in sep:
         if l == '':
             continue
-        print('in loop')
-        print(l)
+        # print('in loop')
+        # print(l)
         # match = matchWithListRegxp(l)
         listType = UL if re.match(LIST_REGXP, l) else OL
         match = re.match(LIST_REGXP, l) if listType == UL else re.match(OL_REGEXP, l)
-        print(listType)
+        # print(listType)
         currentIndentLevel = len(match[1])
         currentIndent = match[1]
-        print(currentIndentLevel, prevIndentLevel)
-        print(parent.id)
+        # print(currentIndentLevel, prevIndentLevel)
+        # print(parent.id)
         if currentIndentLevel < prevIndentLevel:
-            print("case1")
-            print("listType: ", listType)
-            print("id: ", id)
+            # print("case1")
+            # print("listType: ", listType)
+            # print("id: ", id)
             # change the parent
             for i in range(len(parents) - 1):
                 # ネストする前の親要素を見つける
                 if (len(parents[i].content) <= currentIndentLevel)  \
                     and (currentIndentLevel < len(parents[i+1].content)):
-                    print("cahnge parent")
-                    print("listType: ", listType)
-                    print("id: ", id)
-                    print("len: ", len(parents))
+                    # print("cahnge parent")
+                    # print("listType: ", listType)
+                    # print("id: ", id)
+                    # print("len: ", len(parents))
                     parent = parents[i].parent
-                    print("parent.id: ", parent.id)
+                    # print("parent.id: ", parent.id)
         elif currentIndentLevel > prevIndentLevel:
-            print("case2")
-            print("listType: ", listType)
-            print("id: ", id)
+            # print("case2")
+            # print("listType: ", listType)
+            # print("id: ", id)
             id += 1
             lastToken = tokens[-1]
             # text Tokenの親トークンを見る（strongとかならさらに親を見る）
@@ -187,27 +197,27 @@ def tokenizeList(listString):
             parents.append(newParent)
             tokens.append(newParent)
             parent = newParent
-            print("parent.id: ", parent.id)
-            print("currentIndent: ", currentIndentLevel)
+            # print("parent.id: ", parent.id)
+            # print("currentIndent: ", currentIndentLevel)
         prevIndentLevel = currentIndentLevel
 
         id += 1
-        print("out if")
-        print("id: ", id)
-        print("elmType: ", listType)
-        print("parent.id: ", parent.id)
+        # print("out if")
+        # print("id: ", id)
+        # print("elmType: ", listType)
+        # print("parent.id: ", parent.id)
         listToken = Token()
         listToken.create_token(parent, id, LIST, currentIndent)
         parents.append(listToken)
         tokens.append(listToken)
         # contentはlistなら3番目OLなら4番目
         listContent = match[3] if listType==UL else match[4]
-        print("listContent: ", listContent)
+        # print("listContent: ", listContent)
         listText = tokenizeText(listContent, id, listToken)
         id += len(listText)
-        print("aft id: ", id)
+        # print("aft id: ", id)
         tokens.extend(listText)
-    print(tokens)
+    # print(tokens)
     return sorted(tokens, key=lambda token: token.id)
 
 def tokenizeBlockquote(blockquote):

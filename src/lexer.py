@@ -59,7 +59,7 @@ def analize(markdown):
             pre = ''
             continue
         elif state ==PRE_STATE and preMatch == None:
-            pre += md + '\n'
+            pre += md
         if len(pre) > 0 and (state == NEUTRAL_STATE or index == len(rawMdArray) - 1):
             pre += '```'
             mdArray.append({'mdType': 'pre', 'content': pre})

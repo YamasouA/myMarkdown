@@ -2,7 +2,7 @@
 
 # 概要
 - 自作のマークダウン
-- strong, i, strike, ul, ol, h1~h4, blockquote, img, a, code, tableに対応
+- strong, i, strike, ul, ol, h1~h4, blockquote, img, a, code, table, pに対応
 ```bash
 # **H1**
 ## H2
@@ -22,8 +22,9 @@ text**strong**text2
 - 返り値としてhtmlに変換されたものが返ってきます。
 
 # 今後
-- block, code, tableの実装
-- 変換したhtmlをいい感じに改行して読みやすくなるようにする
+- brの追加
 # 参考サイト
 - マークダウンパーサを作ろう
 https://www.m3tech.blog/entry/2021/08/23/124000
+- こちらのリポジトリも参考にしています
+https://github.com/asmsuechan/minute
