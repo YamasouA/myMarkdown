@@ -37,7 +37,7 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
         pToken = p
         # 行が空になるまで繰り返す
         while (len(processingText) != 0):
-            print('Processing Text: ', processingText)
+            # print('Processing Text: ', processingText)
             # matchArray, index = matchWithStrongRegxp(processingText)
             # matchArray[0] -> **bold**
             # matchArray[1] -> bold
@@ -56,7 +56,7 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
             # print("matchArray")
             # print(matchArray)
             if len(matchArray) == 0:
-                print('genText: ', parent.elmType)
+                # print('genText: ', parent.elmType)
                 if pToken.elmType == 'root':
                     id += 1
                     pToken = Token()
@@ -77,8 +77,8 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                         prev = match["index"]
                         outerElement = match
                 # print("outerElement: ", type(outerElement["elmType"]))
-                print("outerElement: ", outerElement["elmType"])
-                print("parentElmtype: ", parent.elmType)
+                # print("outerElement: ", outerElement["elmType"])
+                # print("parentElmtype: ", parent.elmType)
                 if outerElement["elmType"] != 'h1' and \
                     outerElement["elmType"] != 'h2' and \
                     outerElement["elmType"] != 'h3' and \
@@ -265,11 +265,11 @@ def tokenizeTable(tableString):
     tableToken = Token()
     tableToken.create_token(id=id, elmType='table', content='', parent=rootToken)
     tokens = [tableToken]
-    print("=======================")
-    print(tableString)
+    # print("=======================")
+    # print(tableString)
     # tableLines = re.split('\n', tableString)
     tableLines = [t for t in re.split('\n', tableString) if not t == '']
-    print('tableLines: ', tableLines)
+    # print('tableLines: ', tableLines)
     attributes = []
     if len(tableLines) >= 2:
         text = re.split('\|', tableLines[1])
@@ -280,8 +280,8 @@ def tokenizeTable(tableString):
                 attributes.append({'attrName': 'align', 'attrValue': 'right'})
             elif re.match('^:([-]+):$', tableAlign):
                 attributes.append({'attrName': 'align', 'attrValue': 'center'})
-    print("=======================")
-    print(attributes)
+    # print("=======================")
+    # print(attributes)
     for i, t in enumerate(tableLines):
         if i == 0:
             # Table Head
@@ -294,10 +294,10 @@ def tokenizeTable(tableString):
             tableRow.create_token(id=id, elmType='tr', content='', parent=theadToken)
             tokens.append(tableRow)
             t_split = [t for t in re.split('\|', t) if not t == '']
-            print(t_split)
+            # print(t_split)
             for j, headItem in enumerate(t_split):
-                print(headItem)
-                print(j)
+                # print(headItem)
+                # print(j)
                 alignAttributes = [attributes[j]] if len(attributes) > 0 else []
                 id += 1
                 tableHead = Token()
@@ -318,7 +318,7 @@ def tokenizeTable(tableString):
             tokens.append(tableRow)
             t_split = [t for t in re.split('\|', t) if not t == '']
             for j, bodyItem in enumerate(t_split):
-                print(j)
+                # print(j)
                 id += 1
                 tableData = Token()
                 tableData.create_token(id=id, elmType='td', content='', parent=tbodyToken, attributes=[attributes[j]])
@@ -333,9 +333,9 @@ def parse(markdownRow):
     # if matchWithListRegxp(markdownRow):
     #     return tokenizeList(markdownRow)
     # return tokenizeText(markdownRow)
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print(markdownRow["content"])
-    print(markdownRow["mdType"])
+    # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    # print(markdownRow["content"])
+    # print(markdownRow["mdType"])
     if markdownRow["mdType"] == 'list':
         return tokenizeList(markdownRow["content"])
     elif markdownRow["mdType"] == 'blockquote':

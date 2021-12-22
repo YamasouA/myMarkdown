@@ -30,7 +30,7 @@ def analize(markdown):
 
     # rawMdArray = re.split(r'\r\n|\r|\n', markdown)
     rawMdArray = [t for t in re.split(r'\r\n|\r|\n', markdown) if not t == '']
-    print(rawMdArray)
+    # print(rawMdArray)
     mdArray = []
     for index, md in enumerate(rawMdArray):
         listMatch = re.search(LIST_REGXP + '|' + OL_REGEXP, md)
@@ -77,6 +77,8 @@ def analize(markdown):
             state = NEUTRAL_STATE
         elif state == TABLE_ALIGN_STATE and tableHeadBodyMatch:
             state = TABLE_BODY_STATE
+            table += md + '\n'
+        elif state == TABLE_BODY_STATE and tableHeadBodyMatch:
             table += md + '\n'
         elif state == TABLE_BODY_STATE and tableHeadBodyMatch == None:
             state = NEUTRAL_STATE
@@ -137,5 +139,5 @@ def matchWithListRegxp(text):
     result = re.search(LIST_REGXP, text, flags=re.M)
     return result
 
-if __name__ == "__main__":
-    print(matchWithStrongRegxp("**bo**bold**ld**|**bold**"))
+# if __name__ == "__main__":
+    # print(matchWithStrongRegxp("**bo**bold**ld**|**bold**"))

@@ -4,11 +4,9 @@ from generator import generate
 from lexer import analize
 
 def convertToHTMLString(markdown):
-    print("===============parse==================")
-    # mdArray = re.split(r'\r\n|\r|\n', markdown)
     mdArray = analize(markdown)
-    print('mdArray')
-    print(mdArray)
+    # print('mdArray')
+    # print(mdArray)
     asts = list(map(parse, mdArray))
     print('===========asts============')
     for i in asts:
@@ -24,33 +22,40 @@ def convertToHTMLString(markdown):
     return htmlString
 
 if __name__ == "__main__":
-    # s = '* list1\n* list2'
-    # ret = convertToHTMLString(s)
-    # print('input: ' + s)
-    # print('output: ' + ret)
     s = '''
-text**strong**text2
+# h1
+## h2
+### h3
+#### h4
+text
+**bold**
 ~~strike~~
-abcd
-efgh
+__italic__
 ![img](https://avatars2.githubusercontent.com/u/11307908)
 [asmsuechan.com](https://asmsuechan.com)
 ```
-code test
+code
 ```
+> blockquote1
+>> blockquote2
+>> blockquote2-2
+>>> blockquote3
+
+
+
+- list1
+- list2
+ 1. nest_list1
+ 2. nest_list2
+- list3
+
+|table left|table center|table right|
+|:---------|:----------:|----------:|
+|left row1|center row1|right row1|
+|left row2|center row2|right row2|
+|left row3|center row3|right row3|
 '''
 
     ret = convertToHTMLString(s)
     print('input: ' + s)
     print('output:' + ret)
-    # print("=============start parse test============")
-    # for token in ret:
-    #     for text in token:
-    #         print(text.id)
-    #         print(text.content)
-    #         print(text.elmType)
-    #         print(text.parent)
-    # print("=============end parse test=============")
-    # print("")
-    # print("==================start generate test=================")
-    # print(convertToHTMLString('normal'))

@@ -98,6 +98,8 @@ def generateHtmlString(tokens):
     for token in tokens:
         if token.content == "":
             continue
+        if token.elmType == 'break':
+            s.append('<br>')
         s.append(token.content)
         # print(s)
     return ''.join(s[::-1])
