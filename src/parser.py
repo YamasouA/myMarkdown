@@ -126,9 +126,9 @@ def tokenizeText(textElement, initialId = 0, initialRoot = rootToken):
                     elm.create_token(id=id, elmType=elmType, content='', parent=parent, attributes=attributes)
                     parent = elm
                     elements.append(elm)
-                    print("processing Text bef: ", processingText)
+                    # print("processing Text bef: ", processingText)
                     processingText = processingText.replace(outerElement["matchArray"][0], '')
-                    print("processing Text aft: ", processingText)
+                    # print("processing Text aft: ", processingText)
                     tokenize(content, parent)
             parent = p
     tokenize(textElement, parent)
@@ -139,11 +139,20 @@ def tokenizeList(listString):
     LIST = 'li'
     OL = 'ol'
 
-    listMatch = re.search(LIST_REGXP, listString)
-    olMatch = re.search(OL_REGEXP, listString)
+    print("============liststring==============")
+    print(listString)
+    listMatch = re.search(LIST_REGXP, listString, flags=re.M)
+    olMatch = re.search(OL_REGEXP, listString, flags=re.M)
+    print(listMatch)
+    print(olMatch)
 
     rootType = (listMatch and UL) or (olMatch and OL)
-
+    if listMatch and olMatch:
+        rootType = UL if listMatch.start() < olMatch.start() else OL
+    elif listMatch:
+        rootType = UL
+    elif olMatch:
+        rootType = OL
 
     id = 1
     rootUlToken = Token()
@@ -159,8 +168,8 @@ def tokenizeList(listString):
     for l in sep:
         if l == '':
             continue
-        # print('in loop')
-        # print(l)
+        print('in loop')
+        print(l)
         # match = matchWithListRegxp(l)
         listType = UL if re.match(LIST_REGXP, l) else OL
         match = re.match(LIST_REGXP, l) if listType == UL else re.match(OL_REGEXP, l)
@@ -170,7 +179,7 @@ def tokenizeList(listString):
         # print(currentIndentLevel, prevIndentLevel)
         # print(parent.id)
         if currentIndentLevel < prevIndentLevel:
-            # print("case1")
+            print("case1")
             # print("listType: ", listType)
             # print("id: ", id)
             # change the parent
@@ -185,7 +194,7 @@ def tokenizeList(listString):
                     parent = parents[i].parent
                     # print("parent.id: ", parent.id)
         elif currentIndentLevel > prevIndentLevel:
-            # print("case2")
+            print("case2")
             # print("listType: ", listType)
             # print("id: ", id)
             id += 1

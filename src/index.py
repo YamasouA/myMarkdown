@@ -8,16 +8,16 @@ def convertToHTMLString(markdown):
     # print('mdArray')
     # print(mdArray)
     asts = list(map(parse, mdArray))
-    print('===========asts============')
-    for i in asts:
-        print("===============loop=================")
-        for ast in i:
-            print(ast)
-            print(ast.id)
-            print(ast.content)
-            print(ast.elmType)
-            print(ast.parent)
-    print("===============generate==================")
+    # print('===========asts============')
+    # for i in asts:
+    #     print("===============loop=================")
+    #     for ast in i:
+    #         print(ast)
+    #         print(ast.id)
+    #         print(ast.content)
+    #         print(ast.elmType)
+    #         print(ast.parent)
+    # print("===============generate==================")
     htmlString = generate(asts)
     return htmlString
 
@@ -41,13 +41,17 @@ code
 >> blockquote2-2
 >>> blockquote3
 
-
-
 - list1
 - list2
  1. nest_list1
  2. nest_list2
 - list3
+
+1. list1
+2. list2
+ - nest_list1
+ - nest_list2
+3. list3
 
 |table left|table center|table right|
 |:---------|:----------:|----------:|
