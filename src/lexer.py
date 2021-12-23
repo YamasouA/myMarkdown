@@ -30,7 +30,7 @@ def analize(markdown):
 
     rawMdArray = re.split(r'\r\n|\r|\n', markdown)
     # rawMdArray = [t for t in re.split(r'\r\n|\r|\n', markdown) if not t == '']
-    print(rawMdArray)
+    # print(rawMdArray)
     mdArray = []
     for index, md in enumerate(rawMdArray):
         listMatch = re.search(LIST_REGXP + '|' + OL_REGEXP, md)
@@ -93,7 +93,6 @@ def analize(markdown):
         elif state == BLOCKQUOTE_STATE and blockquoteMatch:
             blockquote += md + '\n'
         elif state == BLOCKQUOTE_STATE and md == '':
-            print("Hello")
             state = NEUTRAL_STATE
         if len(blockquote) > 0 and (state ==NEUTRAL_STATE or index == len(rawMdArray) - 1):
             # minuteでは'conte': blockquote.replace('\n$', '')になる
@@ -112,7 +111,7 @@ def analize(markdown):
             len(pre) == 0 and \
             state != PRE_STATE:
             mdArray.append({'mdType': 'text', 'content': md})
-    print(mdArray)
+    # print(mdArray)
     return mdArray
     
 
